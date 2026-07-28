@@ -6,7 +6,7 @@ A stateful, graph-based conversational intelligence framework designed for non-p
 
 ## Live Deployment
 
-[View Vercel Deployment](https://graph-npc-framework.vercel.app/)
+[Live: Go and Explore the village](https://graph-npc-framework.vercel.app/)
 
 ---
 
