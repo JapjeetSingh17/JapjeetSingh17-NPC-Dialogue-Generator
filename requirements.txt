@@ -1,0 +1,14 @@
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-google-genai>=2.0.0
+langchain-groq
+groq
+langgraph>=0.2.0
+gradio>=5.0.0
+gTTS>=2.5.0
+google-genai
+python-dotenv
+pydantic>=2.9.0
+pydantic-settings>=2.4.0
+pillow
+
