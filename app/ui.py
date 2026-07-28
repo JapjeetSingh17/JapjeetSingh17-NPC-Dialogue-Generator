@@ -207,7 +207,12 @@ def build_demo():
 
         # Speech Dialogue Handler
         def handle_talk(text, audio, current_state):
-            if not (text or (audio and os.path.exists(audio))):
+            # Determine if we have any input to process
+            has_text = bool(text and text.strip())
+            has_audio = bool(audio and os.path.exists(str(audio)))
+
+            if not has_text and not has_audio:
+                # No input provided - just return current state without error
                 npc_id = current_state.get("active_npc_id")
                 chat_history = []
                 if npc_id:
@@ -216,12 +221,12 @@ def build_demo():
                             chat_history.append({"role": "user", "content": msg.content})
                         elif msg.type == "ai":
                             chat_history.append({"role": "assistant", "content": msg.content})
+                banner = f"### 🟢 IN RANGE: **{NPC_ROSTER[npc_id]['name']}** - Record your voice or type a message!" if npc_id else "🚶 Move near a villager!"
                 return (
                     chat_history,
                     None,
-                    f"### 🟢 TALKING WITH: **{NPC_ROSTER[npc_id]['name']}**" if npc_id else "🚶 Move near a villager!",
+                    banner,
                     "",
-                    None, # Clear audio input back to empty state
                     current_state
                 )
 
@@ -230,9 +235,8 @@ def build_demo():
                 return (
                     [],
                     None,
-                    "⚠️ Move closer to a villager on the map first!",
+                    "### ⚠️ Move closer to a villager on the map first!",
                     "",
-                    None, # Clear audio input back to empty state
                     current_state
                 )
 
@@ -241,8 +245,8 @@ def build_demo():
             graph_input: MultiNPCState = {
                 "npc_id": npc_id,
                 "messages": npc_msgs,
-                "user_audio_path": audio,
-                "user_text": text or "",
+                "user_audio_path": audio if has_audio else None,
+                "user_text": text.strip() if has_text else "",
                 "npc_text": "",
                 "npc_audio_path": None,
                 "player_pos": current_state.get("player_pos", DEFAULT_PLAYER_POS),
@@ -264,9 +268,8 @@ def build_demo():
             return (
                 chat_history,
                 final_state.get("npc_audio_path"),
-                f"### 🟢 TALKING WITH: **{NPC_ROSTER[npc_id]['name']}**",
+                f"### 🟢 TALKING WITH: **{NPC_ROSTER[npc_id]['name']}** - Record again to continue!",
                 "",   # Clear text input
-                None, # Reset audio input to None so new audio can be recorded for the next turn
                 current_state
             )
 
@@ -290,21 +293,24 @@ def build_demo():
         tp_docks.click(fn=lambda st: teleport_player("Docks", st), inputs=[game_state], outputs=[map_display, proximity_banner, npc_info_box, chatbot, game_state])
         tp_gate.click(fn=lambda st: teleport_player("South Gate", st), inputs=[game_state], outputs=[map_display, proximity_banner, npc_info_box, chatbot, game_state])
 
-        # Wire Start Speaking Button and Speech Handlers with audio_input reset
+        # Output list does NOT include audio_input - microphone state is never touched by backend
+        talk_outputs = [chatbot, npc_voice_output, proximity_banner, text_input, game_state]
+
+        # Wire speech handlers
         start_speaking_btn.click(
             fn=handle_talk,
             inputs=[text_input, audio_input, game_state],
-            outputs=[chatbot, npc_voice_output, proximity_banner, text_input, audio_input, game_state]
+            outputs=talk_outputs
         )
         audio_input.stop_recording(
             fn=handle_talk,
             inputs=[text_input, audio_input, game_state],
-            outputs=[chatbot, npc_voice_output, proximity_banner, text_input, audio_input, game_state]
+            outputs=talk_outputs
         )
         text_input.submit(
             fn=handle_talk,
             inputs=[text_input, audio_input, game_state],
-            outputs=[chatbot, npc_voice_output, proximity_banner, text_input, audio_input, game_state]
+            outputs=talk_outputs
         )
         clear_chat_btn.click(
             fn=clear_npc_chat,
@@ -313,3 +319,4 @@ def build_demo():
         )
 
     return demo
+
