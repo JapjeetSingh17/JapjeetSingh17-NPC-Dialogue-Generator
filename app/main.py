@@ -1,16 +1,17 @@
+"""
+Local development entry point.
+Run: python -m uvicorn app.main:app --reload --port 7860
+"""
+
 import os
-
-os.environ["GRADIO_TEMP_DIR"] = "/tmp"
-os.environ["GRADIO_ALLOWED_PATHS"] = "/tmp,static,."
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from .ui import build_demo
-
-demo = build_demo()
+# Import the FastAPI app from the API module
+from api.index import app
 
 if __name__ == "__main__":
-    print("🧟 Launching Brightwood Zombie RPG LangGraph Application...")
-    demo.launch(server_name="127.0.0.1", server_port=7860, share=False)
+    import uvicorn
+    print("Launching Brightwood RPG NPC Dialogue Engine (local dev)...")
+    uvicorn.run("api.index:app", host="127.0.0.1", port=7860, reload=True)

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Brightwood RPG NPC Dialogue Engine — Interact with AI-powered villagers using real-time voice and text in an immersive zombie survival world.">
+  <title>Brightwood RPG — NPC Dialogue Engine</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <h1>Brightwood NPC Dialogue Engine</h1>
+    <p>Explore the village, approach villagers, and speak with AI-powered NPCs using voice or text</p>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="app-container">
+
+    <!-- ===== LEFT COLUMN: Map & Controls ===== -->
+    <section class="panel" aria-label="Map and movement controls">
+      <div class="panel-header">
+        <span class="icon">🗺️</span>
+        Brightwood Map &amp; Navigation
+      </div>
+      <div class="panel-body">
+
+        <!-- Map Display -->
+        <div class="map-container">
+          <img id="map-image" src="/api/map?px=260&py=260" alt="Brightwood village map showing NPC locations and player position">
+        </div>
+
+        <!-- Movement Controls -->
+        <div class="controls-section">
+          <div class="controls-label">Movement</div>
+          <div class="movement-grid">
+            <button class="btn-move" data-dir="up">&#9650; North</button>
+            <button class="btn-move" data-dir="left">&#9664; West</button>
+            <button class="btn-move" data-dir="reset">&#8962; Center</button>
+            <button class="btn-move" data-dir="right">&#9654; East</button>
+            <button class="btn-move" data-dir="down">&#9660; South</button>
+          </div>
+        </div>
+
+        <!-- Teleport Controls -->
+        <div class="controls-section">
+          <div class="controls-label">Teleport to Villager</div>
+          <div class="teleport-grid">
+            <button class="btn-teleport" data-location="Town Square">Silas (Town Sq)</button>
+            <button class="btn-teleport" data-location="Market Square">Barnaby (Market)</button>
+            <button class="btn-teleport" data-location="Library">Elena (Library)</button>
+            <button class="btn-teleport" data-location="Docks">Lyra (Docks)</button>
+            <button class="btn-teleport" data-location="South Gate">Marcus (Gate)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RIGHT COLUMN: Dialogue Panel ===== -->
+    <section class="panel" aria-label="NPC dialogue interface">
+      <div class="panel-header">
+        <span class="icon">🎙️</span>
+        Voice Conversation
+      </div>
+      <div class="panel-body">
+
+        <!-- NPC Info Banner -->
+        <div id="npc-banner" class="npc-banner exploring">
+          <div class="npc-name">
+            <span id="status-dot" class="status-dot offline"></span>
+            <span id="npc-name">Exploring Brightwood</span>
+          </div>
+          <div id="npc-title" class="npc-title">Move closer to a villager on the map</div>
+          <div id="npc-status" class="npc-status">No villager in range</div>
+        </div>
+
+        <!-- Chat History -->
+        <div id="chat-container" class="chat-container" role="log" aria-live="polite">
+          <div class="chat-empty" id="chat-empty">Walk near a villager to start a conversation</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-row">
+          <button id="btn-speak" class="btn-primary">
+            🎙️ Start Speaking
+          </button>
+          <button id="btn-clear" class="btn-secondary">
+            🗑️ Clear
+          </button>
+        </div>
+
+        <!-- Voice Recording -->
+        <div id="record-section" class="record-section">
+          <div class="record-header">
+            <div class="record-label">
+              <span class="pulse-dot"></span>
+              Microphone
+            </div>
+            <div id="record-timer" class="record-timer">00:00</div>
+          </div>
+          <div class="record-controls">
+            <button id="btn-record" class="btn-record">
+              &#9679; Record
+            </button>
+            <button id="btn-stop-record" class="btn-record" disabled>
+              &#9632; Stop &amp; Send
+            </button>
+          </div>
+        </div>
+
+        <!-- Text Input -->
+        <div class="text-input-section">
+          <div class="text-input-wrapper">
+            <input id="text-input" class="text-input" type="text" placeholder="Type a message (optional)..." autocomplete="off">
+            <button id="btn-send" class="btn-send">Send</button>
+          </div>
+        </div>
+
+        <!-- NPC Audio Response -->
+        <div class="audio-section">
+          <div class="audio-label">
+            🔊 NPC Voice Response
+          </div>
+          <audio id="npc-audio-player" class="audio-player" controls preload="none"></audio>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div id="loading-text" class="loading-text">Processing...</div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
