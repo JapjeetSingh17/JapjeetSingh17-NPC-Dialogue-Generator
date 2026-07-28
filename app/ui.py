@@ -1,11 +1,29 @@
 import os
 import math
+import shutil
 import tempfile
 import gradio as gr
+from gradio import utils as gr_utils
 from PIL import Image, ImageDraw, ImageFont
 
 from .graph import npc_graph, MultiNPCState, NPC_ROSTER
 from .config import settings
+
+
+def copy_to_gradio_cache(filepath):
+    """Copy an audio file into Gradio's internal cache directory so it can be served without 403 errors."""
+    if not filepath or not os.path.exists(filepath):
+        return None
+    try:
+        # Use Gradio's temp directory (hash-based) for file serving
+        cache_dir = os.path.join(tempfile.gettempdir(), "gradio")
+        os.makedirs(cache_dir, exist_ok=True)
+        dest = os.path.join(cache_dir, os.path.basename(filepath))
+        shutil.copy2(filepath, dest)
+        return dest
+    except Exception as e:
+        print(f"[Cache Copy Error] {e}")
+        return filepath
 
 MAP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static", "map.png"))
 NPC_IMG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static", "npc_default.png"))
@@ -265,9 +283,12 @@ def build_demo():
                 elif msg.type == "ai":
                     chat_history.append({"role": "assistant", "content": msg.content})
 
+            # Copy audio to Gradio's cache directory so it can be served properly
+            audio_output = copy_to_gradio_cache(final_state.get("npc_audio_path"))
+
             return (
                 chat_history,
-                final_state.get("npc_audio_path"),
+                audio_output,
                 f"### 🟢 TALKING WITH: **{NPC_ROSTER[npc_id]['name']}** - Record again to continue!",
                 "",   # Clear text input
                 current_state
