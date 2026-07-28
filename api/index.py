@@ -12,5 +12,5 @@ app = FastAPI(title="Brightwood RPG NPC Dialogue Engine")
 # Build Gradio demo interface
 demo = build_demo()
 
-# Mount Gradio app onto FastAPI app at root /
-app = gr.mount_gradio_app(app, demo, path="/")
+# Mount Gradio app onto FastAPI app at root / with allowed_paths for serverless temp & static files
+app = gr.mount_gradio_app(app, demo, path="/", allowed_paths=["/tmp", "static", "."])
