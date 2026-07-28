@@ -1,4 +1,9 @@
 import os
+
+# Configure Gradio temporary directory and allowed paths for Vercel serverless environment
+os.environ["GRADIO_TEMP_DIR"] = "/tmp"
+os.environ["GRADIO_ALLOWED_PATHS"] = "/tmp,static,."
+
 from fastapi import FastAPI
 import gradio as gr
 from dotenv import load_dotenv

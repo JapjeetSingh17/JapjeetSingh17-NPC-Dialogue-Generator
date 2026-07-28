@@ -1,4 +1,8 @@
 import os
+
+os.environ["GRADIO_TEMP_DIR"] = "/tmp"
+os.environ["GRADIO_ALLOWED_PATHS"] = "/tmp,static,."
+
 from dotenv import load_dotenv
 
 load_dotenv()
