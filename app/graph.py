@@ -164,7 +164,7 @@ def npc_reasoning_node(state: MultiNPCState) -> dict:
 import time
 
 def tts_node(state: MultiNPCState) -> dict:
-    """Converts NPC response text to speech audio file using gTTS, saved with unique timestamp for instant streaming."""
+    """Converts NPC response text to speech audio file using gTTS, saved to /tmp for Vercel serverless execution."""
     npc_text = state.get("npc_text", "")
     audio_path = None
     
@@ -172,10 +172,9 @@ def tts_node(state: MultiNPCState) -> dict:
         try:
             speech_text = clean_text_for_tts(npc_text)
             if speech_text:
-                static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static"))
-                os.makedirs(static_dir, exist_ok=True)
+                tmp_dir = tempfile.gettempdir()
                 audio_name = f"npc_speech_{int(time.time() * 1000)}.mp3"
-                audio_path = os.path.join(static_dir, audio_name)
+                audio_path = os.path.join(tmp_dir, audio_name)
                 tts = gTTS(text=speech_text, lang='en', slow=False)
                 tts.save(audio_path)
         except Exception as e:
